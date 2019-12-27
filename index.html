@@ -1,0 +1,68 @@
+<html lang="en">
+	<head>
+		<title>Rina-chan Board</title>
+		<script src="./faces.js"></script>
+		<script src="./rina-chan-board.js"></script>
+		<script>
+			window.addEventListener('load', rinaChanBoardMain);
+		</script>
+		<style>
+			/* Reset all styles - normalize everything to be very plain */
+			* {
+				margin: 0;
+				padding: 0;
+				border: none;
+			}
+			body, html {
+				width: 100%;
+				height: 100%;
+			}
+
+			#export {
+				border: 1px solid black;
+				margin: 20px;
+			}
+
+			#nextFace {
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 50px;
+				height: 30px;
+			}
+
+			#board {
+				width: 100%;
+				height: 100%;
+			}
+
+			/*
+			 * To get the checkerboard effect with flex styling
+			 * (weirdddd) I copied https://codepen.io/connormulcahey/pen/AbFjt
+			 *
+			 * The "parent" and "child" classes are used purely for styling.
+			 */
+			.parent {
+				display: flex;
+				border-bottom: 1px solid #ddd;
+			}
+			.child {
+				margin: auto;
+				height: 100%;
+			}
+
+			.block {
+				border-right: 1px solid #ddd;
+			}
+
+			.active {
+				background: #ff1bca ;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="board"></div>
+		<button id="nextFace" onclick="nextFace()">Next</button>
+		<pre id="export" style="clear: both;"><code></code></pre>
+	</body>
+</html>
