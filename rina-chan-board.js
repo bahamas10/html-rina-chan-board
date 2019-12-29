@@ -45,6 +45,12 @@ function rinaChanBoardMain() {
     BOARD = document.getElementById('board');;
     EXPORT = document.getElementById('export');
 
+    EXPORT.innerHTML = '';
+    BOARD.innerHTML = '';
+    ALL_BLOCKS = [];
+
+    stopNewFaceTimer();
+
     var cssWidth = (100 / BLOCKS_HORIZONTALLY) + '%';
     var cssHeight = (100 / BLOCKS_VERTICALLY) + '%';
 
