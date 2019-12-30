@@ -10,7 +10,7 @@ Made for Jess by Dave for Christmas 2019 :D
 Usage
 -----
 
-Open the `index.html` and it should just work
+Open the `index.html` file and it should just work
 
 Files
 -----
