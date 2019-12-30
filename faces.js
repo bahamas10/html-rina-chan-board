@@ -79,22 +79,22 @@ FACES['new'] = [
 ]
 
 FACES['new2'] = [
-    ' xxx          x',
-    'x   x         x',
-    '    x         x',
-    '   x          x',
-    '  x           x',
-    '  x           x',
-    '  x           x',
-    '               ',
-    '  x           x',
-    '               ',
-    '     xx   xx   ',
-    '    x  xxx  x  ',
-    '    x       x  ',
-    '    x       x  ',
-    '    x  xxx  x  ',
-    '     xx   xx   '
+    ' xxx          x  ',
+    'x   x         x  ',
+    '    x         x  ',
+    '   x          x  ',
+    '  x           x  ',
+    '  x           x  ',
+    '  x           x  ',
+    '                 ',
+    '  x           x  ',
+    '                 ',
+    '     xx   xx     ',
+    '    x  xxx  x    ',
+    '    x       x    ',
+    '    x       x    ',
+    '    x  xxx  x    ',
+    '     xx   xx     '
 ];
 
 // custom face
