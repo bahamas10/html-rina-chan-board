@@ -11,7 +11,7 @@
 /*
  * The number of blocks to place horizontally and vertically.
  */
-var BLOCKS_HORIZONTALLY = 35;
+var BLOCKS_HORIZONTALLY = 36;
 var BLOCKS_VERTICALLY = 26;
 
 // how many animation frames to play between faces
@@ -25,7 +25,7 @@ var ANIMATION_DELAY = 30;
 var RANDOM_CHANCE_ACTIVE = 0.1;
 
 // how often to randomly change the face
-var FACE_CHANGE_RATE = 5 * 1000;
+var FACE_CHANGE_RATE = 15 * 1000;
 
 // End Config
 
