@@ -15,13 +15,15 @@ var BLOCKS_HORIZONTALLY = 36;
 var BLOCKS_VERTICALLY = 26;
 
 // how many animation frames to play between faces
-var ANIMATION_FRAMES = 8;
+var ANIMATION_FRAMES = 5;
 // how long each frame should last (in milliseconds, 1000 == 1 second)
-var ANIMATION_DELAY = 30;
+var ANIMATION_DELAY = 50;
 
-// chance that a piece will be colorful during the animation. the number should
-// be between 0 and 1 where 0 is no chance of a colored piece, and 1 is a all
-// pieces are colored.
+/*
+ * chance that a piece will be colorful during the animation. the number should
+ * be between 0 and 1 where 0 is no chance of a colored piece, and 1 is a all
+ * pieces are colored.
+ */
 var RANDOM_CHANCE_ACTIVE = 0.1;
 
 // how often to randomly change the face
@@ -38,19 +40,22 @@ var CURRENT_FACE = 0;
 
 /*
  * Main entry point into this file.  This should be called by the HTML file
- * that sources this script.  It should be called with a single argument, an
- * HTML element, that can be used to display the board.
+ * that sources this script.
  */
 function rinaChanBoardMain() {
     BOARD = document.getElementById('board');;
     EXPORT = document.getElementById('export');
 
+    /*
+     * Clear everything.  Everything should already be clear - this is just for
+     * good measure.
+     */
     EXPORT.innerHTML = '';
     BOARD.innerHTML = '';
     ALL_BLOCKS = [];
-
     stopNewFaceTimer();
 
+    // Calculate width and height of each block in percentage
     var cssWidth = (100 / BLOCKS_HORIZONTALLY) + '%';
     var cssHeight = (100 / BLOCKS_VERTICALLY) + '%';
 
@@ -58,6 +63,7 @@ function rinaChanBoardMain() {
         ALL_BLOCKS[i] = [];
 
         var parent = document.createElement('div');
+        // Add it to the "parent" class (used for grid layout)
         parent.classList.add('parent');
         parent.style.height = cssHeight;
 
@@ -68,9 +74,11 @@ function rinaChanBoardMain() {
             // Add it to the "block" class (used for styling)
             block.classList.add('block');
 
+            // Add it to the "child" class (used for grid layout)
             block.classList.add('child');
             block.style.width = cssWidth;
 
+            // Register an "onclick" handler
             block.onclick = onClick;
 
             // Add the block to the HTML
@@ -81,13 +89,13 @@ function rinaChanBoardMain() {
         }
 
         /*
-         * add a line break - this is because, at this point in the loop, all
-         * horizontal pieces for a full row have been added, so a "new line" of
-         * blocks is about to start (the next loop iteration)
+         * Add the parent (collection of children) to the screen.  Each "child"
+         * is a block, and each "parent" represents a single row of children.
          */
         BOARD.appendChild(parent);
     }
 
+    // Generate a new face
     newFace();
 }
 
@@ -96,7 +104,11 @@ function loadFace(name) {
     var face = FACES[name];
 
     if (!face) {
-        console.error('failed to load face %s', name);
+        /*
+         * This shouldn't even fail, but we put error checking here just in
+         * case.
+         */
+        alert('failed to load face ' + name);
         return;
     }
 
@@ -119,10 +131,11 @@ function loadFace(name) {
     var boardWidth = BLOCKS_HORIZONTALLY;
 
     if (faceHeight > boardHeight || faceWidth > boardWidth) {
-        console.error('face %s is too big for the given board', name);
+        alert('face ' + name + ' is too big for the given board');
         return;
     }
 
+    // Clear the entire board
     clearBoard();
 
     /*
@@ -145,14 +158,24 @@ function loadFace(name) {
             var piece = row[j];
             var block = ALL_BLOCKS[startingY + i][startingX + j];
 
+            /*
+             * piece -> a character of ' ' or 'x'
+             * block -> the HTML div element for the current grid piece
+             */
+
             switch (piece) {
             case ' ': // remove any active class for space pieces
-                    block.classList.remove('active');
+                    /*
+                     * Because the board is cleared above, we don't need to
+                     * clear any existing pieces as they will have all been
+                     * wiped.
+                     */
+                    // block.classList.remove('active');
                     break;
             case 'x': // add active class for 'x' pieces
                     block.classList.add('active');
                     break;
-            default:
+            default: // anything other than 'x' or ' ' is a mistake
                     console.error('invalid piece in face %s at %d,%d: %s',
                         name, j, i, piece);
                     break;
@@ -160,6 +183,10 @@ function loadFace(name) {
         }
     }
 }
+
+/*
+ * Clear the entire board (make every piece white)
+ */
 function clearBoard() {
     for (var i = 0; i < BLOCKS_VERTICALLY; i++) {
         for (var j = 0; j < BLOCKS_HORIZONTALLY; j++) {
@@ -169,24 +196,156 @@ function clearBoard() {
     }
 }
 
+/*
+ * Return a random faces name
+ */
 function randomFace() {
-    var faces = Object.keys(FACES);
+    var faces = Object.keys(FACES).sort();
     var idx = Math.floor(Math.random() * faces.length);
     return faces[idx];
 }
 
+/*
+ * Generic onclick handler for ALL blocks
+ *
+ * This allows the user to click a block to toggle it on or off, making it easy
+ * to manually draw pixel art.
+ */
 function onClick() {
+    // don't do anything if an animation is currently happening
     if (CURRENTLY_ANIMATING) {
         return;
     }
 
+    /*
+     * When a user clicks a block to toggle it we automatically stop the "new
+     * face" timer that shows a new face periodically.  This will get started
+     * back up when the "Next" button is clicked or the page is refreshed.
+     */
     stopNewFaceTimer();
 
+    // toggle the pixel on or off
     this.classList.toggle('active');
 
+    /*
+     * this was used for creating faces.  this exports the current face as JSON
+     * data at the bottom of the web page
+     */
     EXPORT.textContent = JSON.stringify(exportBoard(), null, 2);
 }
 
+/*
+ * Animate and display a new random face
+ */
+function newFace() {
+    var name = randomFace();
+    _showFaceWithAnimation(name);
+}
+
+/*
+ * Animate and display a new set face
+ */
+function nextFace() {
+    var faces = Object.keys(FACES).sort();
+    var name = faces[CURRENT_FACE];
+
+    /*
+     * Increment the CURRENT_FACE, and wrap back to 0 if it's over the set
+     * number of faces.
+     */
+    CURRENT_FACE = (CURRENT_FACE + 1) % faces.length;
+
+    _showFaceWithAnimation(name);
+}
+
+/*
+ * Used above by newFace and nextFace - show's a face by its name with a nice
+ * little animation
+ */
+function _showFaceWithAnimation(name) {
+    // don't do anything if an animation is already happening
+    if (CURRENTLY_ANIMATING) {
+        return;
+    }
+
+    // clear any existing timer
+    stopNewFaceTimer();
+
+    // do the animation
+    randomAnimation(function () {
+        // load the new face
+        loadFace(name);
+
+        // restart the timer
+        startNewFaceTimer();
+    });
+}
+
+/*
+ * Convenience function to stop any newFace timer if it exists
+ */
+function stopNewFaceTimer() {
+    if (NEW_FACE_TIMER) {
+        clearTimeout(NEW_FACE_TIMER);
+        NEW_FACE_TIMER = null;
+    }
+}
+
+/*
+ * Convenience function to create a new newFace time if it exists
+ */
+function startNewFaceTimer() {
+    stopNewFaceTimer();
+    NEW_FACE_TIMER = setTimeout(newFace, FACE_CHANGE_RATE);
+}
+
+/*
+ * Generate the animation frames.  This function takes a single argument, a
+ * callback function, that will get executed when the animation is finished.
+ */
+function randomAnimation(cb) {
+    if (CURRENTLY_ANIMATING) {
+        // this is a bug if this happens
+        alert('randomAnimation called while animating!');
+        return;
+    }
+
+    CURRENTLY_ANIMATING = true;
+
+    doAnimate(0);
+
+    function doAnimate(numDone) {
+        for (var i = 0; i < BLOCKS_VERTICALLY; i++) {
+            for (var j = 0; j < BLOCKS_HORIZONTALLY; j++) {
+                var block = ALL_BLOCKS[i][j];
+
+                var rand = Math.random();
+
+                if (rand < RANDOM_CHANCE_ACTIVE) {
+                    block.classList.add('active');
+                } else {
+                    block.classList.remove('active');
+                }
+            }
+        }
+
+        if (numDone >= ANIMATION_FRAMES) {
+            CURRENTLY_ANIMATING = false;
+            cb();
+            return;
+        }
+
+        setTimeout(function() {
+            numDone++;
+            doAnimate(numDone);
+        }, ANIMATION_DELAY);
+    }
+}
+
+/*
+ * Used during development.  This serializes the existing board into the JSON
+ * format that faces.js expects.
+ */
 function exportBoard() {
     var columns = [];
     for (var i = 0; i < BLOCKS_VERTICALLY; i++) {
@@ -199,7 +358,10 @@ function exportBoard() {
         columns.push(row.join(''));
     }
 
-    // condense the board if possible
+    /*
+     * Condense the board if possible.  This might be the laziest and worst
+     * code I've ever written.
+     */
 
     // trim off top
     while (true) {
@@ -290,88 +452,4 @@ function exportBoard() {
     }
 
     return columns;
-}
-
-function newFace() {
-    if (CURRENTLY_ANIMATING) {
-        return;
-    }
-
-    stopNewFaceTimer();
-
-    randomAnimation(function () {
-        loadFace(randomFace());
-
-        startNewFaceTimer();
-    });
-}
-
-function nextFace() {
-    if (CURRENTLY_ANIMATING) {
-        return;
-    }
-
-    stopNewFaceTimer();
-
-    randomAnimation(function () {
-        var faces = Object.keys(FACES).sort();
-        var name = faces[CURRENT_FACE];
-
-        CURRENT_FACE = (CURRENT_FACE + 1) % faces.length;
-
-        console.log('loading nextFace %s, currently on %d', name, CURRENT_FACE);
-
-        loadFace(name);
-
-        startNewFaceTimer();
-    });
-}
-
-function stopNewFaceTimer() {
-    if (NEW_FACE_TIMER) {
-        clearTimeout(NEW_FACE_TIMER);
-        NEW_FACE_TIMER = null;
-    }
-}
-
-function startNewFaceTimer() {
-    NEW_FACE_TIMER = setTimeout(newFace, FACE_CHANGE_RATE);
-}
-
-function randomAnimation(cb) {
-    if (CURRENTLY_ANIMATING) {
-        alert('randomAnimation called while animating!');
-        return;
-    }
-
-    CURRENTLY_ANIMATING = true;
-
-    doAnimate(0);
-
-    function doAnimate(numDone) {
-        for (var i = 0; i < BLOCKS_VERTICALLY; i++) {
-            for (var j = 0; j < BLOCKS_HORIZONTALLY; j++) {
-                var block = ALL_BLOCKS[i][j];
-
-                var rand = Math.random();
-
-                if (rand < RANDOM_CHANCE_ACTIVE) {
-                    block.classList.add('active');
-                } else {
-                    block.classList.remove('active');
-                }
-            }
-        }
-
-        if (numDone >= ANIMATION_FRAMES) {
-            CURRENTLY_ANIMATING = false;
-            cb();
-            return;
-        }
-
-        setTimeout(function() {
-            numDone++;
-            doAnimate(numDone);
-        }, ANIMATION_DELAY);
-    }
 }

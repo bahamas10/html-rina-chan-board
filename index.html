@@ -7,23 +7,32 @@
 			window.addEventListener('load', rinaChanBoardMain);
 		</script>
 		<style>
-			/* Reset all styles - normalize everything to be very plain */
+			/* Reset all styles - normalize everything to be very
+			   plain */
 			* {
 				margin: 0;
 				padding: 0;
 				border: none;
 			}
+
+			/* Set the main page width and height to 100% of the
+			   browser window */
 			body, html {
 				width: 100%;
 				height: 100%;
+
+				/* Hide the scrollbar */
 				overflow: hidden;
 			}
 
+			/* Used for development to show raw JSON - scrollbar
+			   must be unhidden to see this */
 			#export {
 				border: 1px solid black;
 				margin: 20px;
 			}
 
+			/* The button to generate a new face (top right) */
 			#nextFace {
 				position: absolute;
 				top: 0;
@@ -32,6 +41,8 @@
 				height: 30px;
 			}
 
+			/* The board itself - must also be stretched to full
+			   size */
 			#board {
 				width: 100%;
 				height: 100%;
@@ -57,15 +68,18 @@
 			}
 
 			.active {
+				/* This color color-picked from Rina herself :o
+				 */
 				background: #E47BB7;
 			}
 		</style>
 	</head>
 	<body>
+		<!-- the board -->
 		<div id="board"></div>
-		<button onclick="BLOCKS_HORIZONTALLY++; BLOCKS_VERTICALLY++; rinaChanBoardMain();">+</button>
-		<button onclick="BLOCKS_HORIZONTALLY--; BLOCKS_VERTICALLY--; rinaChanBoardMain();">-</button>
+		<!-- the "next" button -->
 		<button id="nextFace" onclick="nextFace()">Next</button>
+		<!-- the raw JSON - scrollbar must be unhidden to see this -->
 		<pre id="export" style="clear: both;"><code></code></pre>
 	</body>
 </html>
