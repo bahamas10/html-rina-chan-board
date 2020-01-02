@@ -26,16 +26,30 @@ var ANIMATION_DELAY = 50;
  */
 var RANDOM_CHANCE_ACTIVE = 0.1;
 
-// how often to randomly change the face
+/*
+ * how often to randomly change the face (in milliseconds, this is every 15
+ * seconds.
+ */
 var FACE_CHANGE_RATE = 15 * 1000;
 
 // End Config
 
+// the grid as a 2D area of HTML elements (div)
 var ALL_BLOCKS = [];
+
+// the #board HTML element
 var BOARD;
-var NEW_FACE_TIMER;
-var CURRENTLY_ANIMATING = false;
+
+// the #export HTML element - used for debugging
 var EXPORT;
+
+// the timer used to animate new faces
+var NEW_FACE_TIMER;
+
+// if the board is currently in an animation
+var CURRENTLY_ANIMATING = false;
+
+// the current face that is displayed (as an array index)
 var CURRENT_FACE = 0;
 
 /*
@@ -47,8 +61,8 @@ function rinaChanBoardMain() {
     EXPORT = document.getElementById('export');
 
     /*
-     * Clear everything.  Everything should already be clear - this is just for
-     * good measure.
+     * Clear everything.  Everything should already be clear here, this is just
+     * for good measure.
      */
     EXPORT.innerHTML = '';
     BOARD.innerHTML = '';
@@ -65,6 +79,8 @@ function rinaChanBoardMain() {
         var parent = document.createElement('div');
         // Add it to the "parent" class (used for grid layout)
         parent.classList.add('parent');
+
+        // Manually specify the height as the percentage calculated above
         parent.style.height = cssHeight;
 
         for (var j = 0; j < BLOCKS_HORIZONTALLY; j++) {
@@ -76,6 +92,8 @@ function rinaChanBoardMain() {
 
             // Add it to the "child" class (used for grid layout)
             block.classList.add('child');
+
+            // Manually specify the height as the percentage calculated above
             block.style.width = cssWidth;
 
             // Register an "onclick" handler
@@ -95,10 +113,13 @@ function rinaChanBoardMain() {
         BOARD.appendChild(parent);
     }
 
-    // Generate a new face
+    // Display the first face!
     newFace();
 }
 
+/*
+ * Load a face and display it by name
+ */
 function loadFace(name) {
     console.log('loading face %s', name);
     var face = FACES[name];
@@ -361,6 +382,8 @@ function exportBoard() {
     /*
      * Condense the board if possible.  This might be the laziest and worst
      * code I've ever written.
+     *
+     * seriously, it's bad. don't look.
      */
 
     // trim off top

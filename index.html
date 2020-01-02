@@ -6,9 +6,12 @@
 <html lang="en">
 	<head>
 		<title>Rina-chan Board</title>
+		<!-- load the faces first -->
 		<script src="./faces.js"></script>
+		<!-- load the main script -->
 		<script src="./rina-chan-board.js"></script>
 		<script>
+			// this is the entry point into the rina-chan-board.js file
 			window.addEventListener('load', rinaChanBoardMain);
 		</script>
 		<style>
@@ -57,7 +60,12 @@
 			 * To get the checkerboard effect with flex styling
 			 * (weirdddd) I copied https://codepen.io/connormulcahey/pen/AbFjt
 			 *
-			 * The "parent" and "child" classes are used purely for styling.
+			 * The "parent" and "child" classes are used purely for
+			 * placement of blocks.
+			 *
+			 * The lines on the grid are a combination of the
+			 * border-bottom on the parent (rows) and the
+			 * border-right on the .block classes (columns).
 			 */
 			.parent {
 				display: flex;
@@ -82,8 +90,10 @@
 	<body>
 		<!-- the board -->
 		<div id="board"></div>
+
 		<!-- the "next" button -->
 		<button id="nextFace" onclick="nextFace()">Next</button>
+
 		<!-- the raw JSON - scrollbar must be unhidden to see this -->
 		<pre id="export" style="clear: both;"><code></code></pre>
 	</body>
