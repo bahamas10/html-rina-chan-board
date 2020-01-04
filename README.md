@@ -18,6 +18,7 @@ Files
 - `index.html` the main HTML file - should be very simple as most logic is done in JavaScript
 - `rina-chan-board.js` the main JS file with a bulk of the logic to draw and animate the board
 - `faces.js` cute little pixel art faces to draw
+- `README.md` this file
 
 License
 -------
