@@ -7,6 +7,8 @@ Tennoji](https://love-live.fandom.com/wiki/Rina_Tennoji)
 
 Made for Jess by Dave for Christmas 2019 :D
 
+https://bahamas10.github.io/html-rina-chan-board/
+
 Usage
 -----
 
